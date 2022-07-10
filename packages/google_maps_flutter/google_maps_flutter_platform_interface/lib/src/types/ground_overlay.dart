@@ -43,7 +43,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
       }
     }
 
-    addIfPresent('groundOverlayId', groundOverlayId);
+    addIfPresent('groundOverlayId', groundOverlayId.value);
     addIfPresent('latLngBounds', <List<double>>[
       <double>[
         latLngBounds.southwest.latitude,

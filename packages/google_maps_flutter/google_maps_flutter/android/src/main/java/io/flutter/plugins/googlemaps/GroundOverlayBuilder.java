@@ -23,9 +23,9 @@ public class GroundOverlayBuilder implements GroundOverlayOptionsSink{
 
     @Override
     public void setImgUrl(String imgUrl) {
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-//                .permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         Bitmap bitmap = Convert.getBitmapFromUrl(imgUrl);
         if(bitmap == null) return;

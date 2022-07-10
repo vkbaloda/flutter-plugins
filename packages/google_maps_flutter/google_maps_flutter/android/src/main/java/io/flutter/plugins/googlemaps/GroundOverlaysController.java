@@ -70,6 +70,7 @@ public class GroundOverlaysController {
     }
 
     private void addGroundOverlay(String groundOverlayId, GroundOverlayOptions groundOverlayOptions) {
+//        System.out.println("-------groundOverlay: "+groundOverlayOptions.getBounds().toString());
         final GroundOverlay groundOverlay = googleMap.addGroundOverlay(groundOverlayOptions);
         if(groundOverlay == null) return;
         GroundOverlayController controller = new GroundOverlayController(groundOverlay);

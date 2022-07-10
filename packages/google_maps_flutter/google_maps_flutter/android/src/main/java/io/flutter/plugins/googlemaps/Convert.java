@@ -442,6 +442,7 @@ class Convert {
   static String interpretGroundOverlayOptions(Object o, GroundOverlayOptionsSink sink){
     final Map<?, ?> data = toMap(o);
 
+//    System.out.println("-------groundOverlay: "+data.toString());
     final Object transparency = data.get("transparency");
     if(transparency != null){
       sink.setTransparency(toFloat(transparency));
