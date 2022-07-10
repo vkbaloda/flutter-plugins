@@ -25,6 +25,10 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import io.flutter.view.FlutterMain;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -435,6 +439,30 @@ class Convert {
     }
   }
 
+  static String interpretGroundOverlayOptions(Object o, GroundOverlayOptionsSink sink){
+    final Map<?, ?> data = toMap(o);
+
+    final Object transparency = data.get("transparency");
+    if(transparency != null){
+      sink.setTransparency(toFloat(transparency));
+    }
+    final Object imgUrl = data.get("imgUrl");
+    if(imgUrl != null){
+      sink.setImgUrl(toString(imgUrl));
+    }
+    final Object latLngBounds = data.get("latLngBounds");
+    if(latLngBounds != null){
+      sink.setLatLngBounds(toLatLngBounds(latLngBounds));
+    }
+
+    final String groundOverlayId = (String) data.get("groundOverlayId");
+    if(groundOverlayId == null){
+      throw new IllegalArgumentException("groundOverlayId was null");
+    }else {
+      return groundOverlayId;
+    }
+  }
+
   private static void interpretInfoWindowOptions(
       MarkerOptionsSink sink, Map<String, Object> infoWindow) {
     String title = (String) infoWindow.get("title");
@@ -695,5 +723,23 @@ class Convert {
       dataArray = (byte[]) data.get("data");
     }
     return new Tile(width, height, dataArray);
+  }
+
+  static Bitmap getBitmapFromUrl(String imageUrl){
+    try {
+      URL url = new URL(imageUrl);
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoInput(true);
+      connection.connect();
+      InputStream input = connection.getInputStream();
+      Bitmap bitmap;
+      bitmap = BitmapFactory.decodeStream(input);
+      return bitmap;
+
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return null;
+    }
   }
 }

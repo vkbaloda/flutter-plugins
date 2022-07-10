@@ -10,16 +10,12 @@ class GroundOverlayId extends MapsObjectId<GroundOverlay> {
 class GroundOverlay implements MapsObject<GroundOverlay> {
   const GroundOverlay({
     required this.groundOverlayId,
-    required this.center,
-    required this.heightInMeters,
-    required this.widthInMeters,
+    required this.latLngBounds,
     required this.imgUrl,
     this.transparency = 0.3,
   });
 
-  final int heightInMeters;
-  final int widthInMeters;
-  final LatLng center;
+  final LatLngBounds latLngBounds;
   final GroundOverlayId groundOverlayId;
   final double transparency;
   final String imgUrl;
@@ -28,9 +24,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   GroundOverlay clone() {
     return GroundOverlay(
       groundOverlayId: groundOverlayId,
-      center: center,
-      heightInMeters: heightInMeters,
-      widthInMeters: widthInMeters,
+      latLngBounds: latLngBounds,
       imgUrl: imgUrl,
       transparency: transparency,
     );
@@ -50,9 +44,16 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     }
 
     addIfPresent('groundOverlayId', groundOverlayId);
-    addIfPresent('center', center);
-    addIfPresent('height', heightInMeters);
-    addIfPresent('width', widthInMeters);
+    addIfPresent('latLngBounds', <List<double>>[
+      <double>[
+        latLngBounds.southwest.latitude,
+        latLngBounds.southwest.longitude
+      ],
+      <double>[
+        latLngBounds.northeast.latitude,
+        latLngBounds.northeast.longitude
+      ],
+    ]);
     addIfPresent('imgUrl', imgUrl);
     addIfPresent('transparency', transparency);
 
@@ -69,9 +70,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     }
     return other is GroundOverlay &&
         groundOverlayId == other.groundOverlayId &&
-        center == other.center &&
-        widthInMeters == other.widthInMeters &&
-        heightInMeters == other.heightInMeters &&
+        latLngBounds == other.latLngBounds &&
         imgUrl == other.imgUrl &&
         transparency == other.transparency;
   }
@@ -81,7 +80,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
 
   @override
   String toString() {
-    return 'GroundOverlay{groundOverlayId: $groundOverlayId, center: $center, '
-        'imgUrl: $imgUrl, height: $heightInMeters, width: $widthInMeters, transparency: $transparency}';
+    return 'GroundOverlay{groundOverlayId: $groundOverlayId, imgUrl: $imgUrl'
+        'latLngBounds: $latLngBounds, transparency: $transparency}';
   }
 }

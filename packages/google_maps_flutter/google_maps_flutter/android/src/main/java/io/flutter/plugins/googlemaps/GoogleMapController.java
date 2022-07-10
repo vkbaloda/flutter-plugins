@@ -74,11 +74,13 @@ final class GoogleMapController
   private MethodChannel.Result mapReadyResult;
   private final Context context;
   private final LifecycleProvider lifecycleProvider;
+  private final GroundOverlaysController groundOverlaysController;
   private final MarkersController markersController;
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
   private final TileOverlaysController tileOverlaysController;
+  private List<Object> initialGroundOverlays;
   private List<Object> initialMarkers;
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
@@ -99,6 +101,7 @@ final class GoogleMapController
     methodChannel = new MethodChannel(binaryMessenger, "plugins.flutter.io/google_maps_" + id);
     methodChannel.setMethodCallHandler(this);
     this.lifecycleProvider = lifecycleProvider;
+    this.groundOverlaysController = new GroundOverlaysController(methodChannel);
     this.markersController = new MarkersController(methodChannel);
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, density);
@@ -198,11 +201,13 @@ final class GoogleMapController
     }
     setGoogleMapListener(this);
     updateMyLocationSettings();
+    groundOverlaysController.setGoogleMap(googleMap);
     markersController.setGoogleMap(googleMap);
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
+    updateInitialGroundOverlays();
     updateInitialMarkers();
     updateInitialPolygons();
     updateInitialPolylines();
@@ -298,6 +303,18 @@ final class GoogleMapController
           final CameraUpdate cameraUpdate =
               Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
           animateCamera(cameraUpdate);
+          result.success(null);
+          break;
+        }
+      case "groundOverlays#update":
+        {
+          invalidateMapIfNeeded();
+          List<Object> groundOverlaysToAdd = call.argument("groundOverlaysToAdd");
+          groundOverlaysController.addGroundOverlays(groundOverlaysToAdd);
+          List<Object> groundOverlaysToChange = call.argument("groundOverlaysToChange");
+          groundOverlaysController.changeGroundOverlays(groundOverlaysToChange);
+          List<Object> groundOverlayIdsToRemove = call.argument("groundOverlayIdsToRemove");
+          groundOverlaysController.removeGroundOverlays(groundOverlayIdsToRemove);
           result.success(null);
           break;
         }
@@ -788,6 +805,19 @@ final class GoogleMapController
   }
 
   @Override
+  public void setInitialGroundOverlays(Object initialGroundOverlays) {
+    ArrayList<?> groundOverlays = (ArrayList<?>) initialGroundOverlays;
+    this.initialGroundOverlays = groundOverlays != null ? new ArrayList<>(groundOverlays):null;
+    if(googleMap != null){
+      updateInitialGroundOverlays();
+    }
+  }
+
+  private void updateInitialGroundOverlays(){
+    groundOverlaysController.addGroundOverlays(initialGroundOverlays);
+  }
+
+  @Override
   public void setInitialMarkers(Object initialMarkers) {
     ArrayList<?> markers = (ArrayList<?>) initialMarkers;
     this.initialMarkers = markers != null ? new ArrayList<>(markers) : null;
@@ -858,6 +888,7 @@ final class GoogleMapController
       // the feature won't require the permission.
       // Gradle is doing a static check for missing permission and in some configurations will
       // fail the build if the permission is missing. The following disables the Gradle lint.
+      assert googleMap != null;
       //noinspection ResourceType
       googleMap.setMyLocationEnabled(myLocationEnabled);
       googleMap.getUiSettings().setMyLocationButtonEnabled(myLocationButtonEnabled);

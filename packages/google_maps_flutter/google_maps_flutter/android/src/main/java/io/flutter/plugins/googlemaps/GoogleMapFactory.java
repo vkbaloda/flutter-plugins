@@ -35,6 +35,9 @@ public class GoogleMapFactory extends PlatformViewFactory {
       CameraPosition position = Convert.toCameraPosition(params.get("initialCameraPosition"));
       builder.setInitialCameraPosition(position);
     }
+    if (params.containsKey("groundOverlaysToAdd")) {
+      builder.setInitialGroundOverlays(params.get("groundOverlaysToAdd"));
+    }
     if (params.containsKey("markersToAdd")) {
       builder.setInitialMarkers(params.get("markersToAdd"));
     }
