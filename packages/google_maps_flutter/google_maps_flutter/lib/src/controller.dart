@@ -107,6 +107,19 @@ class GoogleMapController {
         .updateMapConfiguration(update, mapId: mapId);
   }
 
+  /// Updates groundOverlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    assert(groundOverlayUpdates != null);
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
+  }
+
   /// Updates marker configuration.
   ///
   /// Change listeners are notified once the update has been made on the

@@ -26,6 +26,7 @@ analyzer:
     implicit-casts: false
     implicit-dynamic: false
   errors:
+#    public_member_api_docs: ignore
     # treat missing required parameters as a warning (not a hint)
     missing_required_param: warning
     # treat missing returns as a warning (not a hint)
@@ -262,7 +263,7 @@ linter:
     # These are from flutter/flutter/packages, so will need to be preserved
     # separately when moving to a shared file.
     - no_runtimeType_toString # use objectRuntimeType from package:foundation
-    - public_member_api_docs # see https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo#documentation-dartdocs-javadocs-etc
+#    - public_member_api_docs # see https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo#documentation-dartdocs-javadocs-etc
     # Flutter has a specific use case for dependencies that are intentionally
     # not sorted, which doesn't apply to this repo.
     - sort_pub_dependencies

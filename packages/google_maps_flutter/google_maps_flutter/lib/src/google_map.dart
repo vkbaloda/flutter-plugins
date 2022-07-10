@@ -109,6 +109,7 @@ class GoogleMap extends StatefulWidget {
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
     this.buildingsEnabled = true,
+    this.groundOverlays = const <GroundOverlay>{},
     this.markers = const <Marker>{},
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
@@ -178,6 +179,8 @@ class GoogleMap extends StatefulWidget {
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
   final EdgeInsets padding;
+
+  final Set<GroundOverlay> groundOverlays;
 
   /// Markers to be placed on the map.
   final Set<Marker> markers;
@@ -290,6 +293,7 @@ class _GoogleMapState extends State<GoogleMap> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays = {};
   Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
@@ -309,6 +313,7 @@ class _GoogleMapState extends State<GoogleMap> {
         gestureRecognizers: widget.gestureRecognizers,
       ),
       mapObjects: MapObjects(
+        groundOverlays: widget.groundOverlays,
         markers: widget.markers,
         polygons: widget.polygons,
         polylines: widget.polylines,
@@ -322,6 +327,7 @@ class _GoogleMapState extends State<GoogleMap> {
   void initState() {
     super.initState();
     _mapConfiguration = _configurationFromMapWidget(widget);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
     _markers = keyByMarkerId(widget.markers);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
@@ -342,6 +348,7 @@ class _GoogleMapState extends State<GoogleMap> {
   @override
   void didUpdateWidget(GoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _updateGroundOverlays();
     _updateOptions();
     _updateMarkers();
     _updatePolygons();
@@ -360,6 +367,14 @@ class _GoogleMapState extends State<GoogleMap> {
     // ignore: unawaited_futures
     controller._updateMapConfiguration(updates);
     _mapConfiguration = newConfig;
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final GoogleMapController controller = await _controller.future;
+    // ignore: unawaited_futures
+    controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updateMarkers() async {

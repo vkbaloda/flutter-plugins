@@ -79,6 +79,19 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
         mapId: mapId);
   }
 
+  /// Updates groundOverlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates, {
+        required int mapId,
+      }) {
+    throw UnimplementedError('updateGroundOverlays() has not been implemented.');
+  }
+
   /// Updates marker configuration.
   ///
   /// Change listeners are notified once the update has been made on the

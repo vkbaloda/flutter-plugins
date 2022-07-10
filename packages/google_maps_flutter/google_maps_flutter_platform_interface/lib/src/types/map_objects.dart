@@ -16,6 +16,7 @@ import 'types.dart';
 class MapObjects {
   /// Creates a new set of map objects with all the given object types.
   const MapObjects({
+    this.groundOverlays = const <GroundOverlay>{},
     this.markers = const <Marker>{},
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
@@ -23,6 +24,7 @@ class MapObjects {
     this.tileOverlays = const <TileOverlay>{},
   });
 
+  final Set<GroundOverlay> groundOverlays;
   final Set<Marker> markers;
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
