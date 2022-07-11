@@ -44,6 +44,7 @@
 @property(nonatomic, strong) FlutterMethodChannel *channel;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) FLTGroundOverlaysController *groundOverlaysController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
@@ -59,7 +60,7 @@
                     arguments:(id _Nullable)args
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
-      [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
+      [FLTGoogleMapJSONConversions cameraPositionFromDictionary:args[@"initialCameraPosition"]];
   GMSMapView *mapView = [GMSMapView mapWithFrame:frame camera:camera];
   return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
 }
@@ -87,6 +88,9 @@
     }];
     _mapView.delegate = weakSelf;
     _registrar = registrar;
+    _groundOverlaysController = [[FLTGroundOverlaysController alloc] initWithMethodChannel:_channel
+                                                                                   mapView:_mapView
+                                                                                 registrar:registrar];
     _markersController = [[FLTMarkersController alloc] initWithMethodChannel:_channel
                                                                      mapView:_mapView
                                                                    registrar:registrar];
@@ -102,6 +106,10 @@
     _tileOverlaysController = [[FLTTileOverlaysController alloc] init:_channel
                                                               mapView:_mapView
                                                             registrar:registrar];
+    id groundOverlaysToAdd = args[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [_groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
+    }
     id markersToAdd = args[@"markersToAdd"];
     if ([markersToAdd isKindOfClass:[NSArray class]]) {
       [_markersController addMarkers:markersToAdd];
@@ -227,6 +235,20 @@
       NSLog(@"Taking snapshots is not supported for Flutter Google Maps prior to iOS 10.");
       result(nil);
     }
+  } else if ([call.method isEqualToString:@"groundOverlays#update"]) {
+       id groundOverlaysToAdd = call.arguments[@"groundOverlaysToAdd"];
+       if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+         [self.groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
+       }
+       id groundOverlaysToChange = call.arguments[@"groundOverlaysToChange"];
+       if ([groundOverlaysToChange isKindOfClass:[NSArray class]]) {
+         [self.groundOverlaysController changeGroundOverlays:groundOverlaysToChange];
+       }
+       id groundOverlayIdsToRemove = call.arguments[@"groundOverlayIdsToRemove"];
+       if ([groundOverlayIdsToRemove isKindOfClass:[NSArray class]]) {
+         [self.groundOverlaysController removeGroundOverlaysWithIdentifiers:groundOverlayIdsToRemove];
+       }
+       result(nil);
   } else if ([call.method isEqualToString:@"markers#update"]) {
     id markersToAdd = call.arguments[@"markersToAdd"];
     if ([markersToAdd isKindOfClass:[NSArray class]]) {

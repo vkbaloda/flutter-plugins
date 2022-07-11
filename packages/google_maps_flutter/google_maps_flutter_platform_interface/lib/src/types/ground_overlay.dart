@@ -11,14 +11,16 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   const GroundOverlay({
     required this.groundOverlayId,
     required this.latLngBounds,
-    required this.imgUrl,
+    this.imgUrl,
+    this.image,
     this.transparency = 0.3,
-  });
+  }):assert(imgUrl!=null || image!=null);
 
   final LatLngBounds latLngBounds;
   final GroundOverlayId groundOverlayId;
   final double transparency;
-  final String imgUrl;
+  final String? imgUrl;
+  final BitmapDescriptor? image;
 
   @override
   GroundOverlay clone() {
@@ -26,6 +28,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
       groundOverlayId: groundOverlayId,
       latLngBounds: latLngBounds,
       imgUrl: imgUrl,
+      image: image,
       transparency: transparency,
     );
   }
@@ -55,6 +58,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
       ],
     ]);
     addIfPresent('imgUrl', imgUrl);
+    addIfPresent('image', image?.toJson());
     addIfPresent('transparency', transparency);
 
     return json;
@@ -72,6 +76,7 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
         groundOverlayId == other.groundOverlayId &&
         latLngBounds == other.latLngBounds &&
         imgUrl == other.imgUrl &&
+        image == other.image &&
         transparency == other.transparency;
   }
 
@@ -81,6 +86,6 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   @override
   String toString() {
     return 'GroundOverlay{groundOverlayId: $groundOverlayId, imgUrl: $imgUrl'
-        'latLngBounds: $latLngBounds, transparency: $transparency}';
+        'image: ${image?.toString()}, latLngBounds: $latLngBounds, transparency: $transparency}';
   }
 }

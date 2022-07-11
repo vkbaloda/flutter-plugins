@@ -3,6 +3,7 @@ package io.flutter.plugins.googlemaps;
 import android.graphics.Bitmap;
 import android.os.StrictMode;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -35,5 +36,10 @@ public class GroundOverlayBuilder implements GroundOverlayOptionsSink{
     @Override
     public void setLatLngBounds(LatLngBounds latLngBounds) {
         groundOverlayOptions.positionFromBounds(latLngBounds);
+    }
+
+    @Override
+    public void setImage(BitmapDescriptor bitmapDescriptor) {
+        groundOverlayOptions.image(bitmapDescriptor);
     }
 }

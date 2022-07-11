@@ -451,6 +451,10 @@ class Convert {
     if(imgUrl != null){
       sink.setImgUrl(toString(imgUrl));
     }
+    final Object image = data.get("image");
+    if(image != null){
+      sink.setImage(toBitmapDescriptor(image));
+    }
     final Object latLngBounds = data.get("latLngBounds");
     if(latLngBounds != null){
       sink.setLatLngBounds(toLatLngBounds(latLngBounds));
