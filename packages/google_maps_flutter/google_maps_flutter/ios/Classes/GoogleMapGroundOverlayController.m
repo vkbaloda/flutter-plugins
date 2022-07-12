@@ -3,17 +3,17 @@
 
 @interface FLTGoogleMapGroundOverlayController ()
 
-@property(strong, nonatomic) GMSGroundOverlay *GroundOverlay;
+@property(strong, nonatomic) GMSGroundOverlay *groundOverlay;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
 
 @implementation FLTGoogleMapGroundOverlayController
 
-- (instancetype)initGroundOverlayWithPosition:(GMSCoordinateBounds)bounds
-                                        image:(UIImage *)image
-                                   identifier:(NSString *)identifier
-                                      mapView:(GMSMapView *)mapView {
+- (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds *)bounds
+                                      image:(UIImage *)image
+                                 identifier:(NSString *)identifier
+                                    mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _groundOverlay = [GMSGroundOverlay groundOverlayWithBounds:bounds icon:image];
@@ -35,7 +35,7 @@
   self.groundOverlay.icon = image;
 }
 
-- (void)setBounds:(GMSCoordinateBounds)bounds {
+- (void)setBounds:(GMSCoordinateBounds *)bounds {
   self.groundOverlay.bounds = bounds;
 }
 
@@ -52,7 +52,7 @@
   }
   NSArray *bounds = data[@"latLngBounds"];
   if (bounds && bounds != (id)[NSNull null]) {
-    [self setBounds:[FLTGoogleMapJSONConversions locationFromLatLong:bounds]];
+    [self setBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds]];
   }
 }
 

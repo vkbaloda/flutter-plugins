@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable GMSCameraPosition *)cameraPositionFromDictionary:(nullable NSDictionary *)channelValue;
 + (CGPoint)pointFromDictionary:(NSDictionary *)dictionary;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
++ (UIImage *)extractIconFromData:(NSArray *)iconData
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
 
