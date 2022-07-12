@@ -102,61 +102,6 @@
               coordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[1]]];
 }
 
-+ (UIImage *)extractIconFromData:(NSArray *)iconData
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  UIImage *image;
-  if ([iconData.firstObject isEqualToString:@"defaultGroundOverlay"]) {
-    CGFloat hue = (iconData.count == 1) ? 0.0f : [iconData[1] doubleValue];
-    image = [GMSGroundOverlay GroundOverlayImageWithColor:[UIColor colorWithHue:hue / 360.0
-                                                       saturation:1.0
-                                                       brightness:0.7
-                                                            alpha:1.0]];
-  } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
-    if (iconData.count == 2) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-    } else {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]
-                                                   fromPackage:iconData[2]]];
-    }
-  } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
-    if (iconData.count == 3) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-      id scaleParam = iconData[2];
-      image = [self scaleImage:image by:scaleParam];
-    } else {
-      NSString *error =
-          [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
-                                     (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidBitmapDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
-    }
-  } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
-    if (iconData.count == 2) {
-      @try {
-        FlutterStandardTypedData *byteData = iconData[1];
-        CGFloat screenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:screenScale];
-      } @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                       reason:@"Unable to interpret bytes as a valid image."
-                                     userInfo:nil];
-      }
-    } else {
-      NSString *error = [NSString
-          stringWithFormat:@"fromBytes should have exactly one argument, the bytes. Got: %lu",
-                           (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
-    }
-  }
-
-  return image;
-}
-
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)typeValue {
   int value = [typeValue intValue];
   return (GMSMapViewType)(value == 0 ? 5 : value);
@@ -166,7 +111,7 @@
   NSString *update = channelValue[0];
   if ([update isEqualToString:@"newCameraPosition"]) {
     return [GMSCameraUpdate
-        setCamera:[FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue[1]]];
+        setCamera:[FLTGoogleMapJSONConversions cameraPositionFromDictionary:channelValue[1]]];
   } else if ([update isEqualToString:@"newLatLng"]) {
     return [GMSCameraUpdate
         setTarget:[FLTGoogleMapJSONConversions locationFromLatLong:channelValue[1]]];

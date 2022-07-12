@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Defines groundOverlay controllable by Flutter.
 @interface FLTGoogleMapGroundOverlayController : NSObject
 - (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds *)bounds
-                                      image:(UIImage *)image
+                                      image:(nullable UIImage *)image
                                  identifier:(NSString *)identifier
                                     mapView:(GMSMapView *)mapView;
 - (void)removeGroundOverlay;

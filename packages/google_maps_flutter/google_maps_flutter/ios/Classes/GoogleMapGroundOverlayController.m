@@ -11,7 +11,7 @@
 @implementation FLTGoogleMapGroundOverlayController
 
 - (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds *)bounds
-                                      image:(UIImage *)image
+                                      image:(nullable UIImage *)image
                                  identifier:(NSString *)identifier
                                     mapView:(GMSMapView *)mapView {
   self = [super init];
@@ -47,13 +47,75 @@
   }
   NSArray *icon = data[@"icon"];
   if (icon && icon != (id)[NSNull null]) {
-    UIImage *image = [FLTGoogleMapJSONConversions extractIconFromData:icon registrar:registrar];
+    UIImage *image = [self extractIconFromData:icon registrar:registrar];
     [self setImage:image];
   }
   NSArray *bounds = data[@"latLngBounds"];
   if (bounds && bounds != (id)[NSNull null]) {
     [self setBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds]];
   }
+}
+
+- (UIImage *)extractIconFromData:(NSArray *)iconData
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  UIImage *image;
+  if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
+    if (iconData.count == 2) {
+      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
+    } else {
+      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]
+                                                   fromPackage:iconData[2]]];
+    }
+  } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
+    if (iconData.count == 3) {
+      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
+      id scaleParam = iconData[2];
+      image = [self scaleImage:image by:scaleParam];
+    } else {
+      NSString *error =
+          [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
+                                     (unsigned long)iconData.count];
+      NSException *exception = [NSException exceptionWithName:@"InvalidBitmapDescriptor"
+                                                       reason:error
+                                                     userInfo:nil];
+      @throw exception;
+    }
+  } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
+    if (iconData.count == 2) {
+      @try {
+        FlutterStandardTypedData *byteData = iconData[1];
+        CGFloat screenScale = [[UIScreen mainScreen] scale];
+        image = [UIImage imageWithData:[byteData data] scale:screenScale];
+      } @catch (NSException *exception) {
+        @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                       reason:@"Unable to interpret bytes as a valid image."
+                                     userInfo:nil];
+      }
+    } else {
+      NSString *error = [NSString
+          stringWithFormat:@"fromBytes should have exactly one argument, the bytes. Got: %lu",
+                           (unsigned long)iconData.count];
+      NSException *exception = [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                                       reason:error
+                                                     userInfo:nil];
+      @throw exception;
+    }
+  }
+
+  return image;
+}
+
+- (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
+  double scale = 1.0;
+  if ([scaleParam isKindOfClass:[NSNumber class]]) {
+    scale = [scaleParam doubleValue];
+  }
+  if (fabs(scale - 1) > 1e-3) {
+    return [UIImage imageWithCGImage:[image CGImage]
+                               scale:(image.scale * scale)
+                         orientation:(image.imageOrientation)];
+  }
+  return image;
 }
 
 @end
@@ -86,10 +148,10 @@
   for (NSDictionary *groundOverlay in groundOverlaysToAdd) {
     GMSCoordinateBounds *bounds = [FLTGroundOverlaysController getBounds:groundOverlay];
     NSString *identifier = groundOverlay[@"groundOverlayId"];
-    UIImage *image = [FLTGoogleMapJSONConversions extractIconFromData:groundOverlay registrar: self.registrar];
+    //UIImage *image = [FLTGoogleMapJSONConversions extractIconFromData:groundOverlay registrar: self.registrar];
     FLTGoogleMapGroundOverlayController *controller =
         [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithBounds:bounds
-                                                                           image:image
+                                                                           image:NULL//image
                                                                       identifier:identifier
                                                                          mapView:self.mapView];
     [controller interpretGroundOverlayOptions:groundOverlay registrar:self.registrar];
