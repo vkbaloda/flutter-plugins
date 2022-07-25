@@ -14,13 +14,29 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     this.imgUrl,
     this.image,
     this.transparency = 0.3,
-  }):assert(imgUrl!=null || image!=null);
+  }) : assert(imgUrl != null || image != null);
 
   final LatLngBounds latLngBounds;
   final GroundOverlayId groundOverlayId;
   final double transparency;
   final String? imgUrl;
   final BitmapDescriptor? image;
+
+  GroundOverlay copyWith({
+    GroundOverlayId? groundOverlayId,
+    LatLngBounds? latLngBounds,
+    String? imgUrl,
+    BitmapDescriptor? image,
+    double? transparency = 0.3,
+  }) {
+    return GroundOverlay(
+      groundOverlayId: groundOverlayId ?? this.groundOverlayId,
+      latLngBounds: latLngBounds ?? this.latLngBounds,
+      image: image ?? this.image,
+      imgUrl: imgUrl ?? this.imgUrl,
+      transparency: transparency ?? this.transparency,
+    );
+  }
 
   @override
   GroundOverlay clone() {
