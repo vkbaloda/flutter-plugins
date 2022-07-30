@@ -86,10 +86,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> updateGroundOverlays(
-      GroundOverlayUpdates groundOverlayUpdates, {
-        required int mapId,
-      }) {
-    throw UnimplementedError('updateGroundOverlays() has not been implemented.');
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError(
+        'updateGroundOverlays() has not been implemented.');
   }
 
   /// Updates marker configuration.
@@ -383,6 +384,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
     required CameraPosition initialCameraPosition,
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Marker> markers = const <Marker>{},
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
@@ -413,6 +415,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     required CameraPosition initialCameraPosition,
     required TextDirection textDirection,
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Marker> markers = const <Marker>{},
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
@@ -424,6 +427,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
       creationId,
       onPlatformViewCreated,
       initialCameraPosition: initialCameraPosition,
+      groundOverlays: groundOverlays,
       markers: markers,
       polygons: polygons,
       polylines: polylines,
@@ -447,6 +451,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
       onPlatformViewCreated,
       initialCameraPosition: widgetConfiguration.initialCameraPosition,
       textDirection: widgetConfiguration.textDirection,
+      groundOverlays: mapObjects.groundOverlays,
       markers: mapObjects.markers,
       polygons: mapObjects.polygons,
       polylines: mapObjects.polylines,

@@ -508,6 +508,8 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       'initialCameraPosition':
           widgetConfiguration.initialCameraPosition.toMap(),
       'options': mapOptions,
+      'groundOverlaysToAdd':
+          serializeGroundOverlaySet(mapObjects.groundOverlays),
       'markersToAdd': serializeMarkerSet(mapObjects.markers),
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
@@ -596,6 +598,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     PlatformViewCreatedCallback onPlatformViewCreated, {
     required CameraPosition initialCameraPosition,
     required TextDirection textDirection,
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Marker> markers = const <Marker>{},
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
@@ -611,6 +614,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           initialCameraPosition: initialCameraPosition,
           textDirection: textDirection),
       mapObjects: MapObjects(
+          groundOverlays: groundOverlays,
           markers: markers,
           polygons: polygons,
           polylines: polylines,
@@ -625,6 +629,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
     required CameraPosition initialCameraPosition,
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Marker> markers = const <Marker>{},
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
@@ -638,6 +643,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       onPlatformViewCreated,
       initialCameraPosition: initialCameraPosition,
       textDirection: TextDirection.ltr,
+      groundOverlays: groundOverlays,
       markers: markers,
       polygons: polygons,
       polylines: polylines,
