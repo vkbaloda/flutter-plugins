@@ -45,7 +45,7 @@
   if (transparency && transparency != (id)[NSNull null]) {
     [self setTransparency:[transparency floatValue]];
   }
-  NSArray *icon = data[@"icon"];
+  NSArray *icon = data[@"image"];
   if (icon && icon != (id)[NSNull null]) {
     UIImage *image = [self extractIconFromData:icon registrar:registrar];
     [self setImage:image];
@@ -54,12 +54,19 @@
   if (bounds && bounds != (id)[NSNull null]) {
     [self setBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds]];
   }
+  self.groundOverlay.map = self.mapView;
 }
 
 - (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   UIImage *image;
-  if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
+  if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
+      CGFloat hue = (iconData.count == 1) ? 0.0f : [iconData[1] doubleValue];
+      image = [GMSMarker markerImageWithColor:[UIColor colorWithHue:hue / 360.0
+                                                         saturation:1.0
+                                                         brightness:0.7
+                                                              alpha:1.0]];
+    } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
     if (iconData.count == 2) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
     } else {
